@@ -7,32 +7,38 @@
 # @example
 #   include spacewalk
 class spacewalk(
-  String $repo_ensure                     = 'present',
-  String $package_ensure                  = 'present',
-  Optional[String] $server_url            = undef,
-  String $user                            = 'root',
-  Optional[String] $password              = undef,
-  Optional[String] $activationkey         = undef,
-  Optional[String] $repo_source           = undef,
-  Optional[String] $python_hwdata_source  = undef,
-  Optional[String] $epel_repo_key         = undef,
-  Optional[String] $epel_mirror_list      = undef,
-  Optional[Array] $channels               = undef,
+  String $package_ensure                    = 'present',
+  String $server                            = 'spacewalk.com',
+  String $user                              = 'root',
+  String $password                          = 'default',
+  String $activationkey                     = 'default',
+  Pattern[/latest|^[.+_0-9:~-]+$/] $version = '2.6',
+  Optional[String] $rhn_client_tools_source = undef,
+  Optional[String] $python_hwdata_source    = undef,
+  Optional[String] $yum_rhn_plugin_source   = undef,
+  Optional[Array] $channels                 = undef,
 ) {
-  # global variables
-  $python_package_provider = $::operatingsystemmajrelease ? {
-      '7'     => 'yum',
-      default => 'rpm',
+  unless $channels {
+    fail('Parameter channel is required by os release')
   }
-  $use_epel_repo_key = $epel_repo_key ? {
-    undef => "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}",
-    default => $epel_repo_key,
+  $package_url = "https://copr-be.cloud.fedoraproject.org/archive/spacewalk/${version}-client/RHEL/${::operatingsystemmajrelease}/x86_64"
+  $use_rhn_client_tools_source = $rhn_client_tools_source ? {
+    undef   => "${package_url}/rhn-client-tools-${version}.8-1.el${::operatingsystemmajrelease}.noarch.rpm",
+    default => $rhn_client_tools_source,
   }
-  $use_epel_mirror_list = $epel_mirror_list ? {
-    undef => "https://mirrors.fedoraproject.org/metalink?repo=epel-${::operatingsystemmajrelease}",
-    default => $epel_mirror_list,
+  $use_yum_rhn_plugin_source = $yum_rhn_plugin_source ? {
+    undef   => "${package_url}/yum-rhn-plugin-${version}.4-1.el${::operatingsystemmajrelease}.noarch.rpm",
+    default => $yum_rhn_plugin_source,
   }
-  $channel_str = $channels.join(' ')
+  $python_dmidecode = $::operatingsystemmajrelease ? {
+    '7' => 'python-dmidecode-3.12.2-2.el7.x86_64.rpm',
+    default => 'python-dmidecode-3.10.15-2.el6.x86_64.rpm',
+  }
+  $use_python_hwdata_source = $python_hwdata_source ? {
+    undef => "http://mirror.centos.org/centos/${::operatingsystemmajrelease}/os/x86_64/Packages/${python_dmidecode}",
+    default => $python_hwdata_source,
+  }
+  $channel_str = $channels.join(' -c ')
 
   # module containment 
   contain ::spacewalk::install

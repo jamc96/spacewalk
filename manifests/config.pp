@@ -6,24 +6,17 @@
 #
 # @example
 #   include spacewalk::config
-class spacewalk::config(
-  $server_url    = $::spacewalk::server_url,
-  $activationkey = $::spacewalk::activationkey,
-  $epel_repo_key  = $::spaceswalk::use_epel_repo_key,
-  $user          = $::spaceswalk::user,
-  $password      = $::spaceswalk::password,
-  $channel_str   = $::spaceswalk::channel_str,
-) {
+class spacewalk::config inherits spacewalk {
+  # default parameters
   Exec {
-      path    => '/usr/bin:/usr/sbin:/bin:/usr/local/bin',
-      unless  => 'spacewalk-channel --list',
+    path    => '/usr/bin:/usr/sbin:/bin:/usr/local/bin',
+    unless  => 'spacewalk-channel --list',
   }
+  # subscribe to master server
   exec {
-      'rhnreg_ks':
-      command  => "rhnreg_ks --serverUrl${server_url} --activationkey=${activationkey} --force";
-      'rpm_import':
-      command  => "rpm --import ${epel_repo_key}";
-      'spacewalk-channel':
-      command => "spacewalk-channel --add -c ${channel_str} --user ${user} --password ${password}",
-    }
+    'rhnreg_ks':
+      command  => "rhnreg_ks --serverUrl=${spacewalk::server} --activationkey=${spacewalk::activationkey} --force";
+    'spacewalk-channel':
+      command => "spacewalk-channel --add -c ${spacewalk::channel_str} --user ${spacewalk::user} --password ${spacewalk::password}",
+  }
 }

@@ -9,9 +9,8 @@
 class spacewalk::config inherits spacewalk {
   # default parameters
   Exec {
-    path        => '/usr/bin:/usr/sbin:/bin:/usr/local/bin',
-    unless      => 'spacewalk-channel --list',
-    refreshonly => true,
+    path   => '/usr/bin:/usr/sbin:/bin:/usr/local/bin',
+    unless => 'spacewalk-channel --list',
   }
   # subscribe to master server
   exec {

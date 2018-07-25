@@ -53,12 +53,12 @@ describe 'spacewalk' do
         is_expected.to contain_exec('rhnreg_ks').with(
           unless: 'spacewalk-channel --list',
           command:'rhnreg_ks --serverUrl=spacewalk.com/XMLRPC --activationkey=default --force',
+          notify: 'Exec[spacewalk-channel]',
         ) 
       }
       it { 
         is_expected.to contain_exec('spacewalk-channel').with(
           command: "spacewalk-channel --add -c #{os}-channel1 -c #{os}-channel2 --user root --password default",
-          subscribe: 'Exec[rhnreg_ks]',
         ) 
       }
     end

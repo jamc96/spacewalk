@@ -4,7 +4,7 @@ describe 'spacewalk' do
   on_supported_os.each do |os, os_facts|
     context "on #{os} with no parameters" do
       let(:facts) { os_facts }
-      
+
       it 'fails: channels parameter required' do
         expect {
           catalogue
@@ -12,8 +12,8 @@ describe 'spacewalk' do
       end
     end
     context "with channel => [#{os}-channel1, #{os}-channel2]" do
-      let(:facts) { os_facts}
-      let :params do 
+      let(:facts) { os_facts }
+      let :params do
         { channels: ["#{os}-channel1", "#{os}-channel2"] }
       end
 
@@ -29,7 +29,7 @@ describe 'spacewalk' do
       it {
         is_expected.to contain_yumrepo('epel').with(
           ensure: 'present',
-          descr: "Extra Packages for Enterprise Linux #{os_facts[:operatingsystemmajrelease]} - \$basearch", 
+          descr: "Extra Packages for Enterprise Linux #{os_facts[:operatingsystemmajrelease]} - \$basearch",
           enabled: '1',
           failovermethod: 'priority',
           gpgcheck: '1',
@@ -39,31 +39,31 @@ describe 'spacewalk' do
         )
       }
       # packages
-      it { 
+      it {
         is_expected.to contain_package('spacewalk-client-repo').with(
           ensure: 'present',
           provider: 'rpm',
           source: "#{package_url}/spacewalk-client-repo-2.6-0.el#{os_facts[:operatingsystemmajrelease]}.noarch.rpm"
         )
       }
-      ['yum-rhn-plugin','rhn-setup'].each do |key| 
-        it { is_expected.to contain_package(key).with(ensure: 'present', provider: 'yum', require: 'Package[spacewalk-client-repo]')}
+      ['yum-rhn-plugin', 'rhn-setup'].each do |key|
+        it { is_expected.to contain_package(key).with(ensure: 'present', provider: 'yum', require: 'Package[spacewalk-client-repo]') }
       end
-      ['python-dmidecode','python-hwdata'].each do |key| 
-        it { is_expected.to contain_package(key).with(ensure: 'present', provider: 'yum', require: 'Yumrepo[epel]')}
+      ['python-dmidecode', 'python-hwdata'].each do |key|
+        it { is_expected.to contain_package(key).with(ensure: 'present', provider: 'yum', require: 'Yumrepo[epel]') }
       end
       # configure spacewalk
-      it { 
+      it {
         is_expected.to contain_exec('rhnreg_ks').with(
           unless: 'spacewalk-channel --list',
-          command:'rhnreg_ks --serverUrl=spacewalk.com/XMLRPC --activationkey=default --force',
+          command: 'rhnreg_ks --serverUrl=spacewalk.com/XMLRPC --activationkey=default --force',
           notify: 'Exec[spacewalk-channel]',
-        ) 
+        )
       }
-      it { 
+      it {
         is_expected.to contain_exec('spacewalk-channel').with(
           command: "spacewalk-channel --add -c #{os}-channel1 -c #{os}-channel2 --user root --password default",
-        ) 
+        )
       }
     end
   end

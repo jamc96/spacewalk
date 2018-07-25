@@ -10,14 +10,14 @@ class spacewalk::config inherits spacewalk {
   # default parameters
   Exec {
     path   => '/usr/bin:/usr/sbin:/bin:/usr/local/bin',
-    unless => 'spacewalk-channel --list',
   }
   # subscribe to master server
   exec {
     'rhnreg_ks':
       command => "rhnreg_ks --serverUrl=${spacewalk::server}/${spacewalk::api} --activationkey=${spacewalk::activationkey} --force",
-      notify  => Exec['spacewalk-channel'];
+      unless  => 'spacewalk-channel --list';
     'spacewalk-channel':
-      command => "spacewalk-channel --add -c ${spacewalk::channel_str} --user ${spacewalk::user} --password ${spacewalk::password}",
+      command   => "spacewalk-channel --add -c ${spacewalk::channel_str} --user ${spacewalk::user} --password ${spacewalk::password}",
+      subscribe => Exec['rhnreg_ks'],
   }
 }

@@ -15,9 +15,10 @@ class spacewalk::config inherits spacewalk {
   exec {
     'rhnreg_ks':
       command => "rhnreg_ks --serverUrl=${spacewalk::server}/${spacewalk::api} --activationkey=${spacewalk::activationkey} --force",
-      unless  => 'spacewalk-channel --list';
+      unless  => 'spacewalk-channel --list',
+      notify  => Exec['spacewalk-channel'];
     'spacewalk-channel':
-      command   => "spacewalk-channel --add -c ${spacewalk::channel_str} --user ${spacewalk::user} --password ${spacewalk::password}",
-      subscribe => Exec['rhnreg_ks'],
+      command     => "spacewalk-channel --add -c ${spacewalk::channel_str} --user ${spacewalk::user} --password ${spacewalk::password}",
+      refreshonly => true,
   }
 }

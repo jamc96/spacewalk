@@ -4,8 +4,12 @@ describe 'spacewalk' do
   on_supported_os.each do |os, os_facts|
     context "on #{os} with no parameters" do
       let(:facts) { os_facts }
-
-      it { is_expected.to compile.and_raise_error(%r{Parameter channel is required by os release}) }
+      
+      it 'fails: channels parameter required' do
+        expect {
+          catalogue
+        }.to raise_error(Puppet::PreformattedError, %r{Evaluation Error: Error while evaluating a Function Call, Class\[Spacewalk\]: expects a value for parameter 'channels'}) # rubocop:disable Metrics/LineLength
+      end
     end
     context "with channel => [#{os}-channel1, #{os}-channel2]" do
       let(:facts) { os_facts}

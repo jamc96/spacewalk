@@ -14,8 +14,8 @@ class spacewalk(
   String $password                          = 'default',
   String $activationkey                     = 'default',
   String $api                               = 'XMLRPC',
-  Pattern[/latest|^[.+_0-9:~-]+$/] $version = '2.6',
-  Pattern[/latest|^[.+_0-9:~-]+$/] $release = '0',
+  Pattern[/^[.+_0-9:~-]+$/] $version        = '2.6',
+  Pattern[/^[.+_0-9:~-]+$/] $release        = '0',
   Optional[String] $client_repo             = undef,
   String $epel_key                          = "/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}",
 ) {

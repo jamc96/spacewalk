@@ -52,7 +52,7 @@ describe 'spacewalk' do
       it { 
         is_expected.to contain_exec('rhnreg_ks').with(
           unless: 'spacewalk-channel --list',
-          command:'rhnreg_ks --serverUrl=spacewalk.com --activationkey=default --force',
+          command:'rhnreg_ks --serverUrl=spacewalk.com/XMLRPC --activationkey=default --force',
         ) 
       }
       it { 

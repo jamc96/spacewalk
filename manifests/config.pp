@@ -15,7 +15,7 @@ class spacewalk::config inherits spacewalk {
   # subscribe to master server
   exec {
     'rhnreg_ks':
-      command  => "rhnreg_ks --serverUrl=${spacewalk::server} --activationkey=${spacewalk::activationkey} --force";
+      command  => "rhnreg_ks --serverUrl=${spacewalk::server}/${spacewalk::api} --activationkey=${spacewalk::activationkey} --force";
     'spacewalk-channel':
       command => "spacewalk-channel --add -c ${spacewalk::channel_str} --user ${spacewalk::user} --password ${spacewalk::password}",
   }

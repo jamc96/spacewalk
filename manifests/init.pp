@@ -14,17 +14,15 @@ class spacewalk(
   String $password                          = 'default',
   String $activationkey                     = 'default',
   String $api                               = 'XMLRPC',
-  Pattern[/^[.+_0-9:~-]+$/] $version        = '2.6',
+  Pattern[/^[.+_0-9:~-]+$/] $version        = '2.8',
   Pattern[/^[.+_0-9:~-]+$/] $release        = '0',
-  Optional[String] $client_repo             = undef,
-  String $epel_key                          = "/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}",
+  String $client_repo                       = 'https://copr-be.cloud.fedoraproject.org/results/@spacewalkproject',
+  String $gpg_key_path                      = '/etc/pki/rpm-gpg/',
+  String $epel_key                          = "${gpg_key_path}/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}",
+  String $spacewalk_key                     = "${gpg_key_path}/RPM-GPG-KEY-Spacewalk",
+  String $yum_repo_ensure                   = 'present',
+  String $file_ensure                       = 'present',
 ) {
-
-  $package_url = "https://copr-be.cloud.fedoraproject.org/archive/spacewalk/${version}-client/RHEL/${::operatingsystemmajrelease}/x86_64"
-  $use_client_repo = $client_repo ? {
-    undef   => "${package_url}/spacewalk-client-repo-${version}-${release}.el${::operatingsystemmajrelease}.noarch.rpm",
-    default => $client_repo,
-  }
   $channel_str = $channels.join(' -c ')
 
   # module containment 

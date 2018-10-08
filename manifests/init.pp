@@ -20,6 +20,7 @@ class spacewalk(
   String $gpg_key_path                      = '/etc/pki/rpm-gpg/',
   String $epel_key                          = "${gpg_key_path}/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}",
   String $spacewalk_client_key              = "${gpg_key_path}/RPM-GPG-KEY-Spacewalk-client",
+  String $spacewalk_nightly_key             = "${gpg_key_path}/RPM-GPG-KEY-Spacewalk-nightly",
   String $yum_repo_ensure                   = 'present',
   String $file_ensure                       = 'present',
 ) {

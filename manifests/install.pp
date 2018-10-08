@@ -26,8 +26,10 @@ class spacewalk::install inherits spacewalk {
   file {
     $::spacewalk::epel_key:
       content => template("${module_name}/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}.erb");
-    $::spacewalk::spacewalk_key:
-      content => template("${module_name}/RPM-GPG-KEY-SPACEWALK.erb");
+    $::spacewalk::spacewalk_client_key:
+      content => template("${module_name}/RPM-GPG-KEY-SPACEWALK-CLIENT.erb");
+    $::spacewalk::spacewalk_nightly_key:
+      content => template("${module_name}/RPM-GPG-KEY-SPACEWALK-NIGHTLY.erb");
   }
   # repositories
   yumrepo {
@@ -38,12 +40,12 @@ class spacewalk::install inherits spacewalk {
       require    => File[$spacewalk::epel_key];
     'spacewalk-client':
       descr      => 'Spacewalk Client Tools',
-      gpgkey     => "file://${spacewalk::spacewalk_key}",
+      gpgkey     => "file://${spacewalk::spacewalk_client_key}",
       mirrorlist => "${spacewalk::client_repo}/spacewalk-2.8-client/epel-${::operatingsystemmajrelease}-\$basearch/",
       require    => File[$spacewalk::spacewalk_key];
     'spacewalk-client-nightly':
       descr      => 'Spacewalk Client Nightly Tools',
-      gpgkey     => "file://${spacewalk::spacewalk_key}",
+      gpgkey     => "file://${spacewalk::spacewalk_nightly_key}",
       mirrorlist => "${spacewalk::client_repo}/nightly-client/epel-${::operatingsystemmajrelease}-\$basearch/",
       require    => File[$spacewalk::spacewalk_key];
   }

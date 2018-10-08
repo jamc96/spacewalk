@@ -19,7 +19,7 @@ class spacewalk(
   String $client_repo                       = 'https://copr-be.cloud.fedoraproject.org/results/@spacewalkproject',
   String $gpg_key_path                      = '/etc/pki/rpm-gpg/',
   String $epel_key                          = "${gpg_key_path}/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}",
-  String $spacewalk_key                     = "${gpg_key_path}/RPM-GPG-KEY-Spacewalk",
+  String $spacewalk_client_key              = "${gpg_key_path}/RPM-GPG-KEY-Spacewalk-client",
   String $yum_repo_ensure                   = 'present',
   String $file_ensure                       = 'present',
 ) {

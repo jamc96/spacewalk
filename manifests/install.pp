@@ -12,30 +12,47 @@ class spacewalk::install inherits spacewalk {
     ensure   => $spacewalk::package_ensure,
     provider => 'yum',
   }
-  # keys
-  file { $spacewalk::epel_key:
-    ensure  => $spacewalk::package_ensure,
+  Yumrepo {
+    ensure         => $spacewalk::yum_repo_ensure,
+    enabled        => '1',
+    failovermethod => 'priority',
+    gpgcheck       => '1',
+  }
+  File {
+    ensure  => $spacewalk::file_ensure,
     mode    => '0644',
-    content => template("${module_name}/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}.erb"),
+  }
+  # keys
+  file {
+    $::spacewalk::epel_key:
+      content => template("${module_name}/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}.erb");
+    $::spacewalk::spacewalk_client_key:
+      content => template("${module_name}/RPM-GPG-KEY-SPACEWALK-CLIENT.erb");
+    $::spacewalk::spacewalk_nightly_key:
+      content => template("${module_name}/RPM-GPG-KEY-SPACEWALK-NIGHTLY.erb");
   }
   # repositories
-  yumrepo { 'epel':
-      ensure         => $spacewalk::package_ensure,
-      descr          => "Extra Packages for Enterprise Linux ${::operatingsystemmajrelease} - \$basearch",
-      enabled        => '1',
-      failovermethod => 'priority',
-      gpgcheck       => '1',
-      gpgkey         => "file://${spacewalk::epel_key}",
-      mirrorlist     => "https://mirrors.fedoraproject.org/metalink?repo=epel-${::operatingsystemmajrelease}&arch=\$basearch",
-      require        => File[$spacewalk::epel_key];
+  yumrepo {
+    'epel':
+      descr      => "Extra Packages for Enterprise Linux ${::operatingsystemmajrelease} - \$basearch",
+      gpgkey     => "file://${spacewalk::epel_key}",
+      baseurl => "https://mirrors.fedoraproject.org/metalink?repo=epel-${::operatingsystemmajrelease}&arch=\$basearch",
+      require    => File[$spacewalk::epel_key];
+    'spacewalk-client':
+      descr      => 'Spacewalk Client Tools',
+      gpgkey     => "file://${spacewalk::spacewalk_client_key}",
+      baseurl => "${spacewalk::client_repo}/spacewalk-2.8-client/epel-${::operatingsystemmajrelease}-\$basearch/",
+      require    => File[$spacewalk::spacewalk_client_key];
+    'spacewalk-client-nightly':
+      descr      => 'Spacewalk Client Nightly Tools',
+      gpgkey     => "file://${spacewalk::spacewalk_nightly_key}",
+      baseurl => "${spacewalk::client_repo}/nightly-client/epel-${::operatingsystemmajrelease}-\$basearch/",
+      require    => File[$spacewalk::spacewalk_nightly_key];
   }
   # packages
   package {
-    'spacewalk-client-repo':
-      provider => 'rpm',
-      source   => $spacewalk::use_client_repo;
     ['yum-rhn-plugin','rhn-setup']:
-      require => Package['spacewalk-client-repo'];
+      require => Yumrepo['spacewalk-client'];
     ['python-dmidecode','python-hwdata']:
       require => Yumrepo['epel'];
   }

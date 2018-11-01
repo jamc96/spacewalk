@@ -3,3 +3,5 @@ metadata-json-lint
 puppet
 puppet-lint
 rubocop
+spec/fixtures/*
+update_report.txt

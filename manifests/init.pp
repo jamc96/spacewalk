@@ -17,15 +17,15 @@ class spacewalk(
   Pattern[/^[.+_0-9:~-]+$/] $version        = '2.8',
   Pattern[/^[.+_0-9:~-]+$/] $release        = '0',
   String $client_repo                       = 'https://copr-be.cloud.fedoraproject.org/results/@spacewalkproject',
-  String $gpg_key_path                      = '/etc/pki/rpm-gpg/',
+  String $gpg_key_path                      = '/etc/pki/rpm-gpg',
   String $epel_key                          = "${gpg_key_path}/RPM-GPG-KEY-EPEL-${::operatingsystemmajrelease}",
   String $spacewalk_client_key              = "${gpg_key_path}/RPM-GPG-KEY-Spacewalk-client",
   String $spacewalk_nightly_key             = "${gpg_key_path}/RPM-GPG-KEY-Spacewalk-nightly",
   String $yum_repo_ensure                   = 'present',
   String $file_ensure                       = 'present',
 ) {
+  # global variables
   $channel_str = $channels.join(' -c ')
-
   # module containment 
   contain ::spacewalk::install
   contain ::spacewalk::config

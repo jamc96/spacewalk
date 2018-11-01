@@ -34,20 +34,20 @@ class spacewalk::install inherits spacewalk {
   # repositories
   yumrepo {
     'epel':
-      descr      => "Extra Packages for Enterprise Linux ${::operatingsystemmajrelease} - \$basearch",
-      gpgkey     => "file://${spacewalk::epel_key}",
+      descr   => "Extra Packages for Enterprise Linux ${::operatingsystemmajrelease} - \$basearch",
+      gpgkey  => "file://${spacewalk::epel_key}",
       baseurl => "https://mirrors.fedoraproject.org/metalink?repo=epel-${::operatingsystemmajrelease}&arch=\$basearch",
-      require    => File[$spacewalk::epel_key];
+      require => File[$spacewalk::epel_key];
     'spacewalk-client':
-      descr      => 'Spacewalk Client Tools',
-      gpgkey     => "file://${spacewalk::spacewalk_client_key}",
+      descr   => 'Spacewalk Client Tools',
+      gpgkey  => "file://${spacewalk::spacewalk_client_key}",
       baseurl => "${spacewalk::client_repo}/spacewalk-2.8-client/epel-${::operatingsystemmajrelease}-\$basearch/",
-      require    => File[$spacewalk::spacewalk_client_key];
+      require => File[$spacewalk::spacewalk_client_key];
     'spacewalk-client-nightly':
-      descr      => 'Spacewalk Client Nightly Tools',
-      gpgkey     => "file://${spacewalk::spacewalk_nightly_key}",
+      descr   => 'Spacewalk Client Nightly Tools',
+      gpgkey  => "file://${spacewalk::spacewalk_nightly_key}",
       baseurl => "${spacewalk::client_repo}/nightly-client/epel-${::operatingsystemmajrelease}-\$basearch/",
-      require    => File[$spacewalk::spacewalk_nightly_key];
+      require => File[$spacewalk::spacewalk_nightly_key];
   }
   # packages
   package {

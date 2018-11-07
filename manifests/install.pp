@@ -34,10 +34,10 @@ class spacewalk::install inherits spacewalk {
   # repositories
   yumrepo {
     'epel':
-      descr   => "Extra Packages for Enterprise Linux ${::operatingsystemmajrelease} - \$basearch",
-      gpgkey  => "file://${spacewalk::epel_key}",
-      baseurl => "https://mirrors.fedoraproject.org/metalink?repo=epel-${::operatingsystemmajrelease}&arch=\$basearch",
-      require => File[$spacewalk::epel_key];
+      descr    => "Extra Packages for Enterprise Linux ${::operatingsystemmajrelease} - \$basearch",
+      gpgkey   => "file://${spacewalk::epel_key}",
+      metalink => "https://mirrors.fedoraproject.org/metalink?repo=epel-${::operatingsystemmajrelease}&arch=\$basearch",
+      require  => File[$spacewalk::epel_key];
     'spacewalk-client':
       descr   => 'Spacewalk Client Tools',
       gpgkey  => "file://${spacewalk::spacewalk_client_key}",

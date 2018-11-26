@@ -23,6 +23,7 @@ class spacewalk(
   String $spacewalk_nightly_key             = "${gpg_key_path}/RPM-GPG-KEY-Spacewalk-nightly",
   String $yum_repo_ensure                   = 'present',
   String $file_ensure                       = 'present',
+  Boolean $manage_dep                       = true,
 ) {
   # global variables
   $channel_str = $channels.join(' -c ')

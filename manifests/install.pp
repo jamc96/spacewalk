@@ -49,7 +49,15 @@ class spacewalk::install inherits spacewalk {
       baseurl => "${spacewalk::client_repo}/nightly-client/epel-${::operatingsystemmajrelease}-\$basearch/",
       require => File[$spacewalk::spacewalk_nightly_key];
   }
-  # packages
+  # remove packages
+  if $spacewalk::manage_dep {
+    ['NetworkManager-libnm', 'NetworkManager-tui', 'NetworkManager-team', 'NetworkManager'].each |$key| {
+      package { $key:
+        ensure => 'purged',
+      }
+    }
+  }
+  # install packages
   package {
     ['yum-rhn-plugin','rhn-setup']:
       require => Yumrepo['spacewalk-client'];
